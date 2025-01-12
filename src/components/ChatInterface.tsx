@@ -3,17 +3,40 @@
 import { useState, useRef, useEffect } from "react";
 import { useChat } from "ai/react";
 
+interface Highlight {
+  page: number;
+  bounds: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+  type: "highlight" | "circle";
+}
+
 interface ChatInterfaceProps {
   documentId: string;
-  onUpdatePDF?: (page: number, highlights: any[]) => void;
+  onUpdatePDF?: (page: number, highlights: Highlight[]) => void;
 }
+
+interface PDFMetadata {
+  page?: number;
+  highlights?: Highlight[];
+}
+
+// declare global {
+//   interface Window {
+//     SpeechRecognition: SpeechRecognition;
+//     webkitSpeechRecognition: SpeechRecognition;
+//   }
+// }
 
 export default function ChatInterface({
   documentId,
   onUpdatePDF = () => {},
 }: ChatInterfaceProps) {
-  const [isRecording, setIsRecording] = useState(false);
-  const [transcript, setTranscript] = useState("");
+  const [isRecording, setIsRecording] = useState<boolean>(false);
+  const [transcript, setTranscript] = useState<string>("");
   const recognition = useRef<SpeechRecognition | null>(null);
   const synthesis = useRef<SpeechSynthesis | null>(null);
 
@@ -21,9 +44,10 @@ export default function ChatInterface({
     api: "/api/chat",
     body: { documentId },
     onResponse: (response) => {
-      // Parse AI response for PDF controls
       try {
-        const metadata = JSON.parse(response.headers.get("x-metadata") || "{}");
+        const metadata = JSON.parse(
+          response.headers.get("x-metadata") || "{}"
+        ) as PDFMetadata;
         if (metadata.page || metadata.highlights) {
           onUpdatePDF(metadata.page || 1, metadata.highlights || []);
         }
@@ -68,12 +92,12 @@ export default function ChatInterface({
     setIsRecording(!isRecording);
   };
 
-  const speakResponse = (text: string) => {
-    if (synthesis.current) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      synthesis.current.speak(utterance);
-    }
-  };
+  // const speakResponse = (text: string) => {
+  //   if (synthesis.current) {
+  //     const utterance = new SpeechSynthesisUtterance(text);
+  //     synthesis.current.speak(utterance);
+  //   }
+  // };
 
   return (
     <div className="flex flex-col h-full">

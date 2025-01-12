@@ -30,16 +30,16 @@ export async function POST(req: Request) {
   });
 
   // Example metadata for PDF control
-  const metadata = {
-    page: 1,
-    highlights: [
-      {
-        page: 1,
-        bounds: { x: 10, y: 20, width: 30, height: 10 },
-        type: "highlight",
-      },
-    ],
-  };
+  // const metadata = {
+  //   page: 1,
+  //   highlights: [
+  //     {
+  //       page: 1,
+  //       bounds: { x: 10, y: 20, width: 30, height: 10 },
+  //       type: "highlight",
+  //     },
+  //   ],
+  // };
 
   // Store the conversation in the database
   await prisma.message.create({

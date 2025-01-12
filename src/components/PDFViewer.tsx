@@ -1,15 +1,26 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { Worker, Viewer } from "@react-pdf-viewer/core";
+import { useRef } from "react";
+import { Worker, Viewer, RenderPage } from "@react-pdf-viewer/core";
 import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 
+interface Highlight {
+  page: number;
+  bounds: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+  type: "highlight" | "circle";
+}
+
 interface PDFViewerProps {
   url: string;
   currentPage?: number;
-  highlights?: any[];
+  highlights?: Highlight[];
   onPageChange?: (page: number) => void;
 }
 
@@ -22,10 +33,10 @@ export default function PDFViewer({
   const containerRef = useRef<HTMLDivElement>(null);
   const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
-  // Custom renderer to add highlights/annotations
-  const renderPage = (props: any) => {
-    const { page } = props;
-    const pageHighlights = highlights.filter((h) => h.page === page);
+  const renderPage: RenderPage = (props) => {
+    const pageHighlights = highlights.filter(
+      (h) => h.page === props.pageIndex + 1
+    );
 
     return (
       <>

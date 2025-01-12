@@ -3,8 +3,15 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+interface UploadResponse {
+  document?: {
+    id: string;
+  };
+  error?: string;
+}
+
 export default function UploadButton() {
-  const [isUploading, setIsUploading] = useState(false);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
   const router = useRouter();
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,10 +27,10 @@ export default function UploadButton() {
         body: formData,
       });
 
-      const { document } = await response.json();
+      const data: UploadResponse = await response.json();
 
-      if (document?.id) {
-        router.push(`/chat/${document.id}`);
+      if (data.document?.id) {
+        router.push(`/chat/${data.document.id}`);
       }
     } catch (error) {
       console.error("Upload failed:", error);

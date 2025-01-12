@@ -1,14 +1,22 @@
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 
+interface Chat {
+  id: string;
+}
+
 interface Document {
   id: string;
   title: string;
   createdAt: Date;
-  chats: Array<{ id: string }>;
+  chats: Chat[];
 }
 
-export default function DocumentList({ documents }: { documents: Document[] }) {
+interface DocumentListProps {
+  documents: Document[];
+}
+
+export default function DocumentList({ documents }: DocumentListProps) {
   if (documents.length === 0) {
     return (
       <div className="text-center py-12">

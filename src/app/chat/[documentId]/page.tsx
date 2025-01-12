@@ -4,11 +4,13 @@ import { prisma } from "@/lib/prisma";
 import SplitScreen from "@/components/SplitScreen";
 
 export default async function ChatPage({
-  params: { documentId },
+  params,
 }: {
-  params: { documentId: string };
+  params: Promise<{ documentId: string }>;
 }) {
   const { userId } = await auth();
+
+  const { documentId } = await params;
 
   if (!userId) {
     redirect("/sign-in");
